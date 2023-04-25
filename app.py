@@ -5,5 +5,5 @@ response = requests.get(
 soup = BeautifulSoup(response.text, "lxml")
 
 
-# link = soup.select(".highlightParent")
-print(response.text)
+link = soup.select("#image11")
+print(link[0])
