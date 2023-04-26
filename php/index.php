@@ -24,13 +24,6 @@
 
         $imagepng = imagepng($im, $imagepath, 0);
 
-        // require 'image.compare.class.php';
-        // $class = new compareImages;
-        // echo $class->compare('1st.png', '3.png');
-
-        // $url1 = dirname(__FILE__, 2) . '/images/1st.png';
-        // $url2 = dirname(__FILE__, 2) . '/images/classified.jpeg';
-
         ?>
 
 
