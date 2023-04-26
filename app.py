@@ -13,12 +13,11 @@ f = open("php/imageLink.txt", "w+")
 f.write(str(link[0].get('data-src')))
 
 
-# time.sleep(5)
-# result = subprocess.run(
-#     ['php', 'php/index.php'],
-#     stdout=subprocess.PIPE,
-#     check=True,
+result = subprocess.run(
+    ['php', 'php/index.php'],
+    stdout=subprocess.PIPE,
+    check=True,
 
-# )
+)
 
-# print(result.stdout)
+print(result.stdout)
