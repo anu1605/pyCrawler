@@ -10,25 +10,20 @@
 </head>
 
 <body>
-    <div class="container"></div>
+    <div class="container">
+
+        <?php
+
+        $content = file_get_contents(file_get_contents("imageLink.txt"));
+        $im = imagecreatefromstring($content);
+        $imagepath = dirname(__FILE__, 2) . "/" . "images/" . date('Y:m:d h:ia') . ".png";
+        $imagepng = imagepng($im, $imagepath, 0);
+        ?>
+
+
+    </div>
+
 </body>
-<script>
-    var url;
-    $('document').ready(
-        setTimeout(function() {
-            url = $('.container > img').attr('data-src');
-            $.ajax({
-                url: "getImage.php",
-                type: 'post',
-                data: {
-                    action: 'getImage',
-                    url: url
-                }
-
-            })
-
-        }, 1000))
-    $('.container').load('/imageLink.txt')
-</script>
+<script src="/js/index.js"></script>
 
 </html>

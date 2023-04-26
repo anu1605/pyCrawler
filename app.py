@@ -1,21 +1,24 @@
 import subprocess
 from bs4 import BeautifulSoup
 import requests
+import time
 
 response = requests.get(
     "https://epaper.jagran.com/epaper/25-Apr-2023-64-kanpur-edition-kanpur-page-11.html")
 soup = BeautifulSoup(response.text, "lxml")
 
-# print(soup)
+
 link = soup.select("#image11")
-f = open("imageLink.html", "w+")
+f = open("php/imageLink.txt", "w+")
 f.write(str(link[0].get('data-src')))
 
 
-result = subprocess.run(
-    ['php', 'php/index.php'],    # program and arguments
-    stdout=subprocess.PIPE,  # capture stdout
-    check=True,
-)
+# time.sleep(5)
+# result = subprocess.run(
+#     ['php', 'php/index.php'],
+#     stdout=subprocess.PIPE,
+#     check=True,
 
-print(result.stdout)
+# )
+
+# print(result.stdout)
