@@ -3,21 +3,15 @@ from bs4 import BeautifulSoup
 import requests
 import time
 
+date = "25-Apr-2023"
+cityCode = "64"
+city = "kanpur"
+page = "5"
 response = requests.get(
-    "https://epaper.jagran.com/epaper/25-Apr-2023-64-kanpur-edition-kanpur-page-11.html")
+    "https://epaper.jagran.com/epaper/" + date + "-" + cityCode + "-" + city + "-edition-" + city + "-page-" + page + ".html")
 soup = BeautifulSoup(response.text, "lxml")
 
-
-link = soup.select("#image11")
-f = open("php/imageLink.txt", "w+")
+id = "#image" + page
+link = soup.select(id)
+f = open("imageLink.txt", "w+")
 f.write(str(link[0].get('data-src')))
-
-
-result = subprocess.run(
-    ['php', 'php/index.php'],
-    stdout=subprocess.PIPE,
-    check=True,
-
-)
-
-print(result.stdout)
