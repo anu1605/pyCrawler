@@ -9,6 +9,7 @@ beautifulsoup4 = "*"
 html5lib = "*"
 lxml = "*"
 tesseract = "*"
+pillow = "*"
 
 [dev-packages]
 

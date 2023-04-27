@@ -7,43 +7,51 @@ import numpy as np
 from PIL import Image
 
 
-date = "27-Apr-2023"
-cityCode = "64"
-city = "kanpur"
-pageResponse = requests.get(
-    "https://epaper.jagran.com/epaper/edition-today-" + cityCode + "-" + city + ".html")
-soup = BeautifulSoup(pageResponse.text, "lxml")
+cities = ["kanpur", "Lucknow", "delhi-city", "Patna-Nagar", "varanasi-city",
+          "Prayagraj-City", "Gorakhpur-City", "Agra", "Meerut", "bhagalpur", "muzaffarpur-nagar"]
+date = "21-Apr-2023"
+cityCodes = ["64", "11", "4", "84", "45",
+             "79", "56", "193", "29", "205", "203"]
 
+# city = "kanpur"
 
-noOfPages = soup.select('.info')
-pages = int(str(noOfPages[0]).split('\n')[4].split(' ')[-1][0:2])
+for i in range(1, 2):
+    city = cities[i]
+    cityCode = cityCodes[i]
+    pageResponse = requests.get(
+        "https://epaper.jagran.com/epaper/edition-today-" + cityCode + "-" + city + ".html")
+    soup = BeautifulSoup(pageResponse.text, "lxml")
 
-for page in range(1, pages+1):
-    response = requests.get(
-        "https://epaper.jagran.com/epaper/" + date + "-" + cityCode + "-" + city + "-edition-" + city + "-page-" + str(page) + ".html")
-    soup = BeautifulSoup(response.text, "lxml")
+    noOfPages = soup.select('.info')
+    pages = int(str(noOfPages[0]).split('\n')[4].split(' ')[-1][0:2])
 
-# extract paper link
-    id = "#image" + str(page)
-    imageTag = soup.select(id)
-    link = str(imageTag[0].get('data-src'))
-    responseImg = requests.get(link)
+    for page in range(1, 30):
+        response = requests.get(
+            "https://epaper.jagran.com/epaper/" + date + "-" + cityCode + "-" + city + "-edition-" + city + "-page-" + str(page) + ".html")
+        soup = BeautifulSoup(response.text, "lxml")
 
-    with open("imagepy.jpg", "wb") as f:
-        f.write(responseImg.content)
+    # extract paper link
+        id = "#image" + str(page)
+        imageTag = soup.select(id)
+        link = str(imageTag[0].get('data-src'))
+        responseImg = requests.get(link)
 
-    method = cv2.TM_SQDIFF_NORMED
-    small_image = cv2.imread('icon4.jpeg')
-    large_image = cv2.imread('imagepy.jpg')
-    w, h = large_image.shape[:-1]
-
-    res = cv2.matchTemplate(small_image, large_image, cv2.TM_CCOEFF_NORMED)
-    threshold = .8
-    loc = np.where(res >= threshold)
-    a, b = loc
-    if len(a) != 0 and len(b) != 0:
-        with open("images/imagepy.jpg", "wb") as f:
+        with open("imagepy.jpg", "wb") as f:
             f.write(responseImg.content)
+
+        method = cv2.TM_SQDIFF_NORMED
+        small_image = cv2.imread('luck.jpeg')
+        large_image = cv2.imread('imagepy.jpg')
+        w, h = large_image.shape[:-1]
+
+        res = cv2.matchTemplate(small_image, large_image, cv2.TM_CCOEFF_NORMED)
+        threshold = .8
+        loc = np.where(res >= threshold)
+        print(loc)
+        a, b = loc
+        if len(a) != 0 and len(b) != 0:
+            with open("images/DB_" + city + "_" + date + "_hin.jpeg", "wb") as f:
+                f.write(responseImg.content)
 
 # for pt in zip(*loc[::-1]):  # Switch columns and rows
 #     cv2.rectangle(large_image, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
