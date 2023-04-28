@@ -3,15 +3,17 @@ import requests
 import time
 import pytesseract
 import re
+import os
 
 import cv2
 import numpy as np
 from PIL import Image
+from datetime import datetime
 
 
 cities = ["kanpur", "Lucknow", "delhi-city", "Patna-Nagar", "varanasi-city",
           "Prayagraj-City", "Gorakhpur-City", "Agra", "Meerut", "bhagalpur", "muzaffarpur-nagar"]
-date = "28-Apr-2023"
+date = "15-Apr-2023"
 cityCodes = ["64", "11", "4", "84", "45",
              "79", "56", "193", "29", "205", "203"]
 
@@ -29,14 +31,12 @@ for i in range(0, len(cities)):
     noOfPages = soup.select('.info')
     pages = int(str(noOfPages[0]).split('\n')[4].split(' ')[-1][0:2])
 
-    for page in range(1, pages):
-        print("https://epaper.jagran.com/epaper/" + date + "-" + cityCode +
-              "-" + city + "-edition-" + city + "-page-" + str(page) + ".html")
+    for page in range(2, 14):
         response = requests.get(
             "https://epaper.jagran.com/epaper/" + date + "-" + cityCode + "-" + city + "-edition-" + city + "-page-" + str(page) + ".html")
         soup = BeautifulSoup(response.text, "lxml")
 
-    # extract paper link
+        # extract paper link
         id = "#image" + str(page)
         imageTag = soup.select(id)
         link = str(imageTag[0].get('data-src'))
@@ -58,20 +58,32 @@ for i in range(0, len(cities)):
             threshold = .8
             loc = np.where(res >= threshold)
             a, b = loc
+            print(a, b)
 
         # text extraction
         filename = 'imagepy.jpg'
         img1 = np.array(Image.open(filename))
         text = pytesseract.image_to_string(img1, lang='eng').lower().strip()
 
-        # print((text).strip().split(' '))
+        print((text).strip().split(' '))
         array = re.findall(r'[0-9]{4}-[0-9]{3}-[0-9]{4}|[+][0-9]{2}-[0-9]{3}-[0-9]{7}|[+][9,1]{2}[\s][0-9]{4}-[0-9]{6}|[0-9]{10}|\bclassifieds\b',
                            text)
 
-        if len(a) != 0 and len(b) != 0 or len(array) != 0:
+        if len(a) != 0 or len(b) != 0 or len(array) != 0:
             counter += 1
-            with open("images/DB_" + city + "_" + date.replace(date[3:6], dictionary[date[3:6]]) + "_0" + str(counter) + "_hin.jpeg", "wb") as f:
+            if (counter <= 9):
+                number = "_0"
+            else:
+                number = "_"
+            dateObj = datetime.strptime(date.replace(
+                date[3:6], dictionary[date[3:6]]), '%d-%m-%Y')
+            formateDate = dateObj.strftime("%Y-%m-%d")
+            print(formateDate)
+            with open("images/DJ_" + city + "_" + formateDate + number + str(counter) + "_hin.jpeg", "wb") as f:
                 f.write(responseImg.content)
+            # with open(os.path.dirname(os.path.abspath(__file__)) + "/images/DJ_" + city + "_" + formateDate + number + str(counter) + "_hin.jpeg", "wb") as f:
+            #     f.write(responseImg.content)
+
 
 # for pt in zip(*loc[::-1]):  # Switch columns and rows
 #     cv2.rectangle(large_image, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
